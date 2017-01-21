@@ -16,28 +16,34 @@ public:
 	UPROPERTY()
 	ATower * SelectedTower;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float TimeBeforeCatastrophy;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool Catastrophy;
 
 	UPROPERTY(BlueprintReadOnly)
-	int TotalPopulation;
+	int TotalPopulationTrapped;
+
+	UPROPERTY(BlueprintReadOnly)
+	int TotalPopulationLeft;
 
 	UPROPERTY(BlueprintReadOnly)
 	int MaxPopulation;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(BlueprintReadOnly)
 	int MaxResources;
 
 	UPROPERTY(BlueprintReadOnly)
 	int Resources;
 
+	UFUNCTION(BlueprintCallable, Category = "Start")
+	void Start();
+
 	UFUNCTION(BlueprintCallable, Category="Spawning")
 	void AddTower(TSubclassOf<ATower> TowerClass);
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TArray<ATower*> SpawnedTowers;
 
 	UPROPERTY()
@@ -56,6 +62,8 @@ protected:
 	void ScrollEastWest(float value);
 	void LeftPress();
 	void LeftRelease();
+
+	bool Started;
 
 };
 

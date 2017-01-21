@@ -34,7 +34,7 @@ void AHouseAIController::Tick(float DeltaTime)
 				if (house->Population > 0)
 				{
 					house->Population--;
-					pc->TotalPopulation--;
+					pc->TotalPopulationTrapped--;
 					Spawn();
 					NextSpawn = SpawnSpeed;
 				}
@@ -57,6 +57,6 @@ void AHouseAIController::Spawn()
 		FActorSpawnParameters params;
 		params.Owner = GetPawn();
 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		AHawaianCharacter * haw = GetWorld()->SpawnActor<AHawaianCharacter>(CharacterClass, params.Owner->GetActorLocation() + FVector(10.0f,0,0.0f), FRotator(0, 0, 0), params);
+		AHawaianCharacter * haw = GetWorld()->SpawnActor<AHawaianCharacter>(CharacterClass, params.Owner->GetActorLocation() + FVector(0.0f,-70,20.0f), FRotator(0, 0, 0), params);
 	}
 }

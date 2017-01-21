@@ -14,6 +14,7 @@ ATower::ATower() : Super()
 	CanGuide = false;
 	IsActive = false;
 	IsForcedActive = false;
+	CanCan = false;
 
 	FCollisionResponseContainer channels;
 	channels.EngineTraceChannel1 = 1;
@@ -40,12 +41,20 @@ void ATower::BeginPlay()
 	Super::BeginPlay();	
 	DecalComp->SetRelativeScale3D(FVector(MaxRadius, MaxRadius, MaxRadius));
 	DecalComp->SetHiddenInGame(false);
-	if (IsForcedActive)
-		IsActive = true;
 	Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
-	pc->Resources -= Cost;
+
+	if (!CanCan && IsForcedActive)
+		pc->SpawnedTowers.Add(this);
+
+	if (!IsForcedActive)
+		pc->Resources -= Cost;
+	else
+		CanCan = true;
+
 	pc->SpawnedTowers.Add(this);
 }
+
+bool ATower::CanCan = false;
 
 // Called every frame
 void ATower::Tick( float DeltaTime )
@@ -88,6 +97,13 @@ void ATower::Tick( float DeltaTime )
 		if(deactivated)
 			DecalComp->SetHiddenInGame(true);
 	}
+	else
+	{
+		if (IsActive)
+			DecalComp->SetHiddenInGame(false);
+		else
+			DecalComp->SetHiddenInGame(true);
+	}
 }
 
 // Called to bind functionality to input
@@ -98,8 +114,20 @@ void ATower::SetupPlayerInputComponent(class UInputComponent* _InputComponent)
 
 void ATower::Grab(APlayerController * ctrl)
 {
-	if(!IsForcedActive)
+	if (!IsForcedActive)
 		Dragged = true;
+	else
+	{
+		IsActive = true;
+		Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
+		for (ATower * tower : pc->SpawnedTowers)
+			if (tower != this && tower->IsForcedActive)
+			{
+				tower->SetActorHiddenInGame(true);
+			}
+				
+	}
+		
 	Ctrl = ctrl;
 }
 
@@ -110,7 +138,7 @@ void ATower::Drop()
 
 bool ATower::GetIsActive()
 {
-	return (IsActive || IsForcedActive) && !Dragged;
+	return IsActive && !Dragged;
 }
 
 void ATower::OnCursorOver_Implementation(UPrimitiveComponent * Component)
@@ -120,6 +148,6 @@ void ATower::OnCursorOver_Implementation(UPrimitiveComponent * Component)
 
 void ATower::EndCursorOver_Implementation(UPrimitiveComponent * Component)
 {
-	if(!Dragged && !GetIsActive())
+	if(!GetIsActive())
 	DecalComp->SetHiddenInGame(true);
 }

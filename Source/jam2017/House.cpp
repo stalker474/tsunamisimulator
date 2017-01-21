@@ -20,7 +20,8 @@ void AHouse::BeginPlay()
 {
 	Super::BeginPlay();
 	Ajam2017PlayerController * ctrl = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
-	ctrl->TotalPopulation += Population;
+	ctrl->TotalPopulationTrapped += Population;
+	ctrl->TotalPopulationLeft += Population;
 	ctrl->MaxPopulation += Population;
 }
 

@@ -14,11 +14,17 @@ Ajam2017PlayerController::Ajam2017PlayerController()
 	bEnableClickEvents = true;
 	bBlockInput = false;
 	SelectedTower = nullptr;
-	TotalPopulation = 0;
+	TotalPopulationTrapped = 0;
+	TotalPopulationLeft = 0;
 	MaxPopulation = 0;
 	MaxResources = 100;
 	Resources = 100;
-	TimeBeforeCatastrophy = 10.0f;
+	TimeBeforeCatastrophy = 150.0f;
+}
+
+void Ajam2017PlayerController::Start()
+{
+	Started = true;
 }
 
 void Ajam2017PlayerController::AddTower(TSubclassOf<ATower> TowerClass)
@@ -33,7 +39,8 @@ void Ajam2017PlayerController::AddTower(TSubclassOf<ATower> TowerClass)
 void Ajam2017PlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-	TimeBeforeCatastrophy -= DeltaTime;
+	if(Started)
+		TimeBeforeCatastrophy -= DeltaTime;
 }
 
 void Ajam2017PlayerController::SetupInputComponent()

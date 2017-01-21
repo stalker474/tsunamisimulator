@@ -16,6 +16,7 @@ AWaterWall::AWaterWall()
 void AWaterWall::BeginPlay()
 {
 	Super::BeginPlay();
+	StartLocation = GetActorLocation();
 	
 }
 
@@ -23,7 +24,9 @@ void AWaterWall::BeginPlay()
 void AWaterWall::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-
+	auto location = GetActorLocation();
+	location.Z += 0.3f * DeltaTime;
+	SetActorLocation(location);
 }
 
 // Called to bind functionality to input

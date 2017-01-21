@@ -74,6 +74,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Zone")
 	UDecalComponent * DecalComp;
 
+	static bool CanCan;
+
 private:
 	bool Dragged;
 
