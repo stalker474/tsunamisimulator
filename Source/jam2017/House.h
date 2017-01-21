@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "HawaianCharacter.h"
 #include "GameFramework/Pawn.h"
 #include "House.generated.h"
 
@@ -25,4 +26,10 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	int Population;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AHawaianCharacter> CharacterClass;
+
+	UPROPERTY(EditDefaultsOnly)
+	UBoxComponent * CollisionComp;
 };

@@ -22,6 +22,7 @@ void Ajam2017PlayerController::AddTower(TSubclassOf<ATower> TowerClass)
 	FActorSpawnParameters params;
 	params.Owner = this;
 	SelectedTower = GetWorld()->SpawnActor<ATower>(TowerClass);
+	SpawnedTowers.Add(SelectedTower);
 	SelectedTower->Grab(this);
 }
 

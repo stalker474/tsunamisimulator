@@ -1,0 +1,94 @@
+// Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
+
+#include "jam2017.h"
+#include "jam2017PlayerController.h"
+#include "CameraPawn.h"
+
+Ajam2017PlayerController::Ajam2017PlayerController()
+{
+	DefaultMouseCursor = EMouseCursor::Crosshairs;
+	bShowMouseCursor = true;
+	bEnableTouchEvents = false;
+	bEnableTouchOverEvents = false;
+	bEnableMouseOverEvents = true;
+	bEnableClickEvents = true;
+	bBlockInput = false;
+	SelectedTower = nullptr;
+	TotalPopulation = 0;
+}
+
+void Ajam2017PlayerController::AddTower(TSubclassOf<ATower> TowerClass)
+{
+	FActorSpawnParameters params;
+	params.Owner = this;
+	SelectedTower = GetWorld()->SpawnActor<ATower>(TowerClass);
+	SelectedTower->Grab(this);
+}
+
+void Ajam2017PlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+}
+
+void Ajam2017PlayerController::SetupInputComponent()
+{
+	// set up gameplay key bindings
+	Super::SetupInputComponent();
+	InputComponent->BindAxis("ScrollNorthSouth", this, &Ajam2017PlayerController::ScrollNorthSouth);
+	InputComponent->BindAxis("ScrollEastWest", this, &Ajam2017PlayerController::ScrollEastWest);
+	InputComponent->BindAxis("MouseMoveX", this, &Ajam2017PlayerController::MouseMoveX);
+	InputComponent->BindAxis("MouseMoveY", this, &Ajam2017PlayerController::MouseMoveY);
+	InputComponent->BindAction("LeftClick", IE_Pressed, this, &Ajam2017PlayerController::LeftPress);
+	InputComponent->BindAction("LeftClick", IE_Released, this, &Ajam2017PlayerController::LeftRelease);
+}
+
+void Ajam2017PlayerController::MouseMoveX(float value)
+{
+	if(!SelectedTower)
+	ScrollEastWest(value);
+}
+
+void Ajam2017PlayerController::MouseMoveY(float value)
+{
+	if (!SelectedTower)
+	ScrollNorthSouth(value);
+}
+
+void Ajam2017PlayerController::ScrollNorthSouth(float value)
+{
+	ACameraPawn * player = Cast<ACameraPawn>(GetPawn());
+	auto movementComp = player->GetMovementComponent();
+	movementComp->AddInputVector(FVector(value, 0, 0),true);
+}
+
+void Ajam2017PlayerController::ScrollEastWest(float value)
+{
+	ACameraPawn * player = Cast<ACameraPawn>(GetPawn());
+	auto movementComp = player->GetMovementComponent();
+	movementComp->AddInputVector(FVector(0, value, 0), true);
+}
+
+void Ajam2017PlayerController::LeftPress()
+{
+	FHitResult result;
+	this->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, result);
+
+	if (result.Actor.IsValid())
+	{
+		ATower * tower = Cast<ATower>(result.Actor.Get());
+		if (tower)
+		{
+			SelectedTower = tower;
+			tower->Grab(this);
+		}	
+	}	
+}
+
+void Ajam2017PlayerController::LeftRelease()
+{
+	if (SelectedTower)
+	{
+		SelectedTower->Drop();
+		SelectedTower = nullptr;
+	}
+}

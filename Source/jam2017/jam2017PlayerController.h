@@ -21,17 +21,23 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Spawning")
 	void AddTower(TSubclassOf<ATower> TowerClass);
 
+	UPROPERTY()
+	TArray<ATower*> SpawnedTowers;
+
 protected:
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 	// End PlayerController interface
+
+
 	void MouseMoveX(float value);
 	void MouseMoveY(float value);
 	void ScrollNorthSouth(float value);
 	void ScrollEastWest(float value);
 	void LeftPress();
 	void LeftRelease();
+
 };
 
 
