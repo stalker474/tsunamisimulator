@@ -18,6 +18,7 @@ void AHawainanAIController::Tick(float DeltaTime)
 	{
 		auto location = pawn->GetActorLocation();
 		auto myLocation = GetPawn()->GetActorLocation();
+
 	}
 
 }

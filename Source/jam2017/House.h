@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	int Population;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool IsAlerted;
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AHawaianCharacter> CharacterClass;
 

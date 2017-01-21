@@ -41,6 +41,21 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Stats")
 	float Cost;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Type")
+	bool CanAlert;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Type")
+	bool CanGuide;
+
+	UFUNCTION()
+	bool GetIsActive();
+
+	UPROPERTY(EditAnywhere, Category = "Active")
+	bool IsActive;
+
+	UPROPERTY(EditAnywhere, Category = "Active")
+	bool IsForcedActive;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Stats")
 	float BuildTime;
 

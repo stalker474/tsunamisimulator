@@ -21,13 +21,22 @@ void AHouseAIController::Tick(float DeltaTime)
 		bool canSpawn = false;
 		for (ATower * tower : pc->SpawnedTowers)
 		{
+			if (!tower->CanAlert || !tower->GetIsActive())
+				continue;
+			AHouse * house = Cast<AHouse>(GetPawn());
+			house->IsAlerted = false;
 			auto position = tower->GetActorLocation();
 			auto myPosition = GetPawn()->GetActorLocation();
 
 			if ((myPosition - position).Size2D() < tower->MaxRadius)
 			{
-				Spawn();
-				NextSpawn = SpawnSpeed;
+				house->IsAlerted = true;
+				if (house->Population > 0)
+				{
+					house->Population--;
+					Spawn();
+					NextSpawn = SpawnSpeed;
+				}
 			}
 			else
 				NextSpawn -= DeltaTime;

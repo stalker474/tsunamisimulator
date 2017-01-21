@@ -2,13 +2,18 @@
 
 #include "jam2017.h"
 #include "Tower.h"
+#include "jam2017PlayerController.h"
 
 
 // Sets default values
-ATower::ATower()
+ATower::ATower() : Super()
 {
 	this->bBlockInput = false;
 	this->AutoReceiveInput = EAutoReceiveInput::Player0;
+	CanAlert = false;
+	CanGuide = false;
+	IsActive = false;
+	IsForcedActive = false;
 
 	FCollisionResponseContainer channels;
 	channels.EngineTraceChannel1 = 1;
@@ -25,6 +30,7 @@ ATower::ATower()
 	CollisionComp->SetCollisionResponseToChannels(channels);
 	RootComponent = CollisionComp;
 	DecalComp->SetupAttachment(RootComponent);
+	DecalComp->DecalSize = FVector(1, 1, 1);
 	DecalComp->SetRelativeRotation(FRotator(-90, 0, 0));
 }
 
@@ -32,14 +38,17 @@ ATower::ATower()
 void ATower::BeginPlay()
 {
 	Super::BeginPlay();	
-	DecalComp->DecalSize = FVector(MaxRadius, MaxRadius, MaxRadius);
+	DecalComp->SetRelativeScale3D(FVector(MaxRadius, MaxRadius, MaxRadius));
 	DecalComp->SetHiddenInGame(true);
+	if (IsForcedActive)
+		IsActive = true;
 }
 
 // Called every frame
 void ATower::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+	
 	if (Dragged && Ctrl)
 	{
 		FHitResult result;
@@ -51,9 +60,24 @@ void ATower::Tick( float DeltaTime )
 		else
 		SetActorLocation(result.ImpactPoint);
 	}
-		
-		
+	else if(!IsForcedActive)
+	{
+		Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
+		IsActive = false;
+		for (ATower * tower : pc->SpawnedTowers)
+		{
+			if (tower == this)
+				continue;
+			auto position = tower->GetActorLocation();
+			auto myPosition = GetActorLocation();
 
+			if ((myPosition - position).Size2D() < tower->MaxRadius + MaxRadius)
+			{
+				if (tower->CanGuide && tower->GetIsActive())
+					IsActive = true;
+			}
+		}
+	}
 }
 
 // Called to bind functionality to input
@@ -71,7 +95,11 @@ void ATower::Grab(APlayerController * ctrl)
 void ATower::Drop()
 {
 	Dragged = false;
-	DecalComp->SetHiddenInGame(true);
+}
+
+bool ATower::GetIsActive()
+{
+	return (IsActive || IsForcedActive) && !Dragged;
 }
 
 void ATower::OnCursorOver_Implementation(UPrimitiveComponent * Component)
@@ -81,6 +109,6 @@ void ATower::OnCursorOver_Implementation(UPrimitiveComponent * Component)
 
 void ATower::EndCursorOver_Implementation(UPrimitiveComponent * Component)
 {
-	if(!Dragged)
+	if(!Dragged && !GetIsActive())
 	DecalComp->SetHiddenInGame(true);
 }
