@@ -18,8 +18,7 @@ void ASafeZonePawn::BeginPlay()
 {
 	Super::BeginPlay();
 	Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetPrimaryPlayerController());
-	
-	
+	pc->SpawnedSafeZones.Add(this);
 }
 
 // Called every frame

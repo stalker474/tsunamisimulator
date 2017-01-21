@@ -17,7 +17,7 @@ void AHouseAIController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (NextSpawn <= 0.0f)
 	{
-		Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetPrimaryPlayerController());
+		Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
 		bool canSpawn = false;
 		for (ATower * tower : pc->SpawnedTowers)
 		{
