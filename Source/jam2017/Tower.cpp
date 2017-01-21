@@ -39,9 +39,12 @@ void ATower::BeginPlay()
 {
 	Super::BeginPlay();	
 	DecalComp->SetRelativeScale3D(FVector(MaxRadius, MaxRadius, MaxRadius));
-	DecalComp->SetHiddenInGame(true);
+	DecalComp->SetHiddenInGame(false);
 	if (IsForcedActive)
 		IsActive = true;
+	Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
+	pc->Resources -= Cost;
+	pc->SpawnedTowers.Add(this);
 }
 
 // Called every frame
@@ -63,6 +66,7 @@ void ATower::Tick( float DeltaTime )
 	else if(!IsForcedActive)
 	{
 		Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
+		bool deactivated = IsActive;
 		IsActive = false;
 		for (ATower * tower : pc->SpawnedTowers)
 		{
@@ -74,9 +78,15 @@ void ATower::Tick( float DeltaTime )
 			if ((myPosition - position).Size2D() < tower->MaxRadius + MaxRadius)
 			{
 				if (tower->CanGuide && tower->GetIsActive())
+				{
 					IsActive = true;
+					DecalComp->SetHiddenInGame(false);
+					deactivated = false;
+				}
 			}
 		}
+		if(deactivated)
+			DecalComp->SetHiddenInGame(true);
 	}
 }
 
@@ -88,7 +98,8 @@ void ATower::SetupPlayerInputComponent(class UInputComponent* _InputComponent)
 
 void ATower::Grab(APlayerController * ctrl)
 {
-	Dragged = true;
+	if(!IsForcedActive)
+		Dragged = true;
 	Ctrl = ctrl;
 }
 

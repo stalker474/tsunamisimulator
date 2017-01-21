@@ -15,6 +15,7 @@ AHouseAIController::AHouseAIController(const FObjectInitializer& ObjectInitializ
 void AHouseAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	NextSpawn -= DeltaTime;
 	if (NextSpawn <= 0.0f)
 	{
 		Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
@@ -24,7 +25,6 @@ void AHouseAIController::Tick(float DeltaTime)
 			if (!tower->CanAlert || !tower->GetIsActive())
 				continue;
 			AHouse * house = Cast<AHouse>(GetPawn());
-			house->IsAlerted = false;
 			auto position = tower->GetActorLocation();
 			auto myPosition = GetPawn()->GetActorLocation();
 
@@ -34,12 +34,11 @@ void AHouseAIController::Tick(float DeltaTime)
 				if (house->Population > 0)
 				{
 					house->Population--;
+					pc->TotalPopulation--;
 					Spawn();
 					NextSpawn = SpawnSpeed;
 				}
 			}
-			else
-				NextSpawn -= DeltaTime;
 		}
 	}
 }
@@ -58,6 +57,6 @@ void AHouseAIController::Spawn()
 		FActorSpawnParameters params;
 		params.Owner = GetPawn();
 		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-		AHawaianCharacter * haw = GetWorld()->SpawnActor<AHawaianCharacter>(CharacterClass, params.Owner->GetActorLocation(), FRotator(0, 0, 0), params);
+		AHawaianCharacter * haw = GetWorld()->SpawnActor<AHawaianCharacter>(CharacterClass, params.Owner->GetActorLocation() + FVector(10.0f,0,0.0f), FRotator(0, 0, 0), params);
 	}
 }

@@ -17,7 +17,7 @@ ASafeZonePawn::ASafeZonePawn()
 void ASafeZonePawn::BeginPlay()
 {
 	Super::BeginPlay();
-	Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetPrimaryPlayerController());
+	Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
 	pc->SpawnedSafeZones.Add(this);
 }
 

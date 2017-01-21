@@ -19,6 +19,15 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	int TotalPopulation;
 
+	UPROPERTY(BlueprintReadOnly)
+	int MaxPopulation;
+
+	UPROPERTY(EditDefaultsOnly)
+	int MaxResources;
+
+	UPROPERTY(BlueprintReadOnly)
+	int Resources;
+
 	UFUNCTION(BlueprintCallable, Category="Spawning")
 	void AddTower(TSubclassOf<ATower> TowerClass);
 

@@ -39,7 +39,7 @@ public:
 	float MaxRadius;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Stats")
-	float Cost;
+	int Cost;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Type")
 	bool CanAlert;

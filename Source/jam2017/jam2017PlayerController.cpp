@@ -15,14 +15,17 @@ Ajam2017PlayerController::Ajam2017PlayerController()
 	bBlockInput = false;
 	SelectedTower = nullptr;
 	TotalPopulation = 0;
+	MaxPopulation = 0;
+	MaxResources = 100;
+	Resources = 100;
 }
 
 void Ajam2017PlayerController::AddTower(TSubclassOf<ATower> TowerClass)
 {
 	FActorSpawnParameters params;
 	params.Owner = this;
-	SelectedTower = GetWorld()->SpawnActor<ATower>(TowerClass);
-	SpawnedTowers.Add(SelectedTower);
+	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	SelectedTower = GetWorld()->SpawnActor<ATower>(TowerClass,params);
 	SelectedTower->Grab(this);
 }
 
