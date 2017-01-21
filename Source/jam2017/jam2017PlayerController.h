@@ -16,6 +16,12 @@ public:
 	UPROPERTY()
 	ATower * SelectedTower;
 
+	UPROPERTY(EditAnywhere)
+	float TimeBeforeCatastrophy;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool Catastrophy;
+
 	UPROPERTY(BlueprintReadOnly)
 	int TotalPopulation;
 

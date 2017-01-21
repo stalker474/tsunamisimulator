@@ -18,6 +18,7 @@ Ajam2017PlayerController::Ajam2017PlayerController()
 	MaxPopulation = 0;
 	MaxResources = 100;
 	Resources = 100;
+	TimeBeforeCatastrophy = 10.0f;
 }
 
 void Ajam2017PlayerController::AddTower(TSubclassOf<ATower> TowerClass)
@@ -32,6 +33,7 @@ void Ajam2017PlayerController::AddTower(TSubclassOf<ATower> TowerClass)
 void Ajam2017PlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
+	TimeBeforeCatastrophy -= DeltaTime;
 }
 
 void Ajam2017PlayerController::SetupInputComponent()
