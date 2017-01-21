@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "jam2017.h"
+#include "jam2017PlayerController.h"
 #include "SafeZonePawn.h"
 
 
@@ -16,6 +17,8 @@ ASafeZonePawn::ASafeZonePawn()
 void ASafeZonePawn::BeginPlay()
 {
 	Super::BeginPlay();
+	Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetPrimaryPlayerController());
+	
 	
 }
 

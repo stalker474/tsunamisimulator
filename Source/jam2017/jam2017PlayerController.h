@@ -1,6 +1,7 @@
 // Copyright 1998-2016 Epic Games, Inc. All Rights Reserved.
 #pragma once
 #include "Tower.h"
+#include "SafeZonePawn.h"
 #include "GameFramework/PlayerController.h"
 #include "jam2017PlayerController.generated.h"
 
@@ -23,6 +24,9 @@ public:
 
 	UPROPERTY()
 	TArray<ATower*> SpawnedTowers;
+
+	UPROPERTY()
+	TArray<ASafeZonePawn*> SpawnedSafeZones;
 
 protected:
 	// Begin PlayerController interface
