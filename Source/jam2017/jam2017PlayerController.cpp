@@ -29,6 +29,8 @@ void Ajam2017PlayerController::Start()
 
 void Ajam2017PlayerController::AddTower(TSubclassOf<ATower> TowerClass)
 {
+	if (Resources - TowerClass.GetDefaultObject()->Cost <= 0)
+		return;
 	FActorSpawnParameters params;
 	params.Owner = this;
 	params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;

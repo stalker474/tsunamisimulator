@@ -15,4 +15,6 @@ class JAM2017_API AHawainanAIController : public AAIController
 	
 public:
 	void Tick(float DeltaTime);
+	bool KnowsDirection;
+	float DirectionChange;
 };

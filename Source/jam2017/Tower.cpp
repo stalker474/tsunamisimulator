@@ -39,7 +39,7 @@ ATower::ATower() : Super()
 void ATower::BeginPlay()
 {
 	Super::BeginPlay();	
-	DecalComp->SetRelativeScale3D(FVector(MaxRadius, MaxRadius, MaxRadius));
+	PulsateRadius = MaxRadius;
 	DecalComp->SetHiddenInGame(false);
 	Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
 
@@ -60,6 +60,18 @@ bool ATower::CanCan = false;
 void ATower::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+	if (IsActive)
+	{
+		PulsateRadius += DeltaTime * 700.0f;
+		if (PulsateRadius > MaxRadius + 800.0f)
+		{
+			PulsateRadius = 0.0f;
+		}
+	}
+	else
+		PulsateRadius = MaxRadius;
+	float tempRadius = FMath::Min(PulsateRadius, MaxRadius);
+	DecalComp->SetRelativeScale3D(FVector(tempRadius, tempRadius, tempRadius));
 	
 	if (Dragged && Ctrl)
 	{

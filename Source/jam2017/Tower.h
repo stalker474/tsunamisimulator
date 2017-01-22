@@ -78,6 +78,7 @@ public:
 
 private:
 	bool Dragged;
+	float PulsateRadius;
 
 	APlayerController * Ctrl;
 
