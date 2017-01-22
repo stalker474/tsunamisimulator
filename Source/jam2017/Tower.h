@@ -29,6 +29,9 @@ public:
 	UFUNCTION()
 	void Drop();
 
+	UFUNCTION()
+		void Remove();
+
 	UFUNCTION(BlueprintNativeEvent, Category = "Events")
 	void OnCursorOver(UPrimitiveComponent* Component);
 
@@ -45,6 +48,9 @@ public:
 	bool CanAlert;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Type")
+	bool CanMove;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Type")
 	bool CanGuide;
 
 	UFUNCTION()
@@ -58,6 +64,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Stats")
 	float BuildTime;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Stats")
+	float BuildTimeLeft;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
 	USoundWave* ConstructionSound;

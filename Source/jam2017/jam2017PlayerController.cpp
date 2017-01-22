@@ -19,7 +19,8 @@ Ajam2017PlayerController::Ajam2017PlayerController()
 	MaxPopulation = 0;
 	MaxResources = 100;
 	Resources = 100;
-	TimeBeforeCatastrophy = 150.0f;
+	TimeBeforeCatastrophy = 120.0f;
+	DestroyedTowers = 0;
 }
 
 void Ajam2017PlayerController::Start()
@@ -55,6 +56,7 @@ void Ajam2017PlayerController::SetupInputComponent()
 	InputComponent->BindAxis("MouseMoveY", this, &Ajam2017PlayerController::MouseMoveY);
 	InputComponent->BindAction("LeftClick", IE_Pressed, this, &Ajam2017PlayerController::LeftPress);
 	InputComponent->BindAction("LeftClick", IE_Released, this, &Ajam2017PlayerController::LeftRelease);
+	InputComponent->BindAction("RightClick", IE_Released, this, &Ajam2017PlayerController::RightPress);
 }
 
 void Ajam2017PlayerController::MouseMoveX(float value)
@@ -97,6 +99,19 @@ void Ajam2017PlayerController::LeftPress()
 			tower->Grab(this);
 		}	
 	}	
+}
+
+void Ajam2017PlayerController::RightPress()
+{
+	FHitResult result;
+	this->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, result);
+
+	if (result.Actor.IsValid())
+	{
+		ATower * tower = Cast<ATower>(result.Actor.Get());
+		if (tower)
+			tower->Remove();
+	}
 }
 
 void Ajam2017PlayerController::LeftRelease()

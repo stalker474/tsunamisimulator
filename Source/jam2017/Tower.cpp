@@ -15,6 +15,8 @@ ATower::ATower() : Super()
 	IsActive = false;
 	IsForcedActive = false;
 	CanCan = false;
+	CanMove = true;
+	BuildTimeLeft = 0.0f;
 
 	FCollisionResponseContainer channels;
 	channels.EngineTraceChannel1 = 1;
@@ -45,15 +47,10 @@ void ATower::BeginPlay()
 	DecalComp->SetHiddenInGame(false);
 	Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
 
-	if (!CanCan && IsForcedActive)
-		pc->SpawnedTowers.Add(this);
-
-	if (!IsForcedActive)
-		pc->Resources -= Cost;
-	else
-		CanCan = true;
-
+	pc->Resources -= Cost;
 	pc->SpawnedTowers.Add(this);
+
+	BuildTimeLeft = BuildTime;
 }
 
 bool ATower::CanCan = false;
@@ -62,7 +59,8 @@ bool ATower::CanCan = false;
 void ATower::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-	if (IsActive)
+
+	if (GetIsActive())
 	{
 		PulsateRadius += DeltaTime * 700.0f;
 		if (PulsateRadius > MaxRadius + 800.0f)
@@ -77,6 +75,7 @@ void ATower::Tick( float DeltaTime )
 	
 	if (Dragged && Ctrl)
 	{
+		BuildTimeLeft = BuildTime;
 		FHitResult result;
 		Ctrl->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, result);
 		if (ATower* tower = Cast<ATower>(result.Actor.Get()))
@@ -86,11 +85,20 @@ void ATower::Tick( float DeltaTime )
 		else
 		SetActorLocation(result.ImpactPoint);
 	}
-	else if(!IsForcedActive)
+	else if(CanMove)
 	{
+		if (BuildTimeLeft > 0)
+		{
+			BuildTimeLeft -= DeltaTime;
+			return;
+		}
+
 		Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
 		bool deactivated = IsActive;
-		IsActive = false;
+		IsActive = IsForcedActive;
+		bool contactWithGuide = false;
+		bool contactWithAlert = false;
+		
 		for (ATower * tower : pc->SpawnedTowers)
 		{
 			if (tower == this)
@@ -100,24 +108,38 @@ void ATower::Tick( float DeltaTime )
 
 			if ((myPosition - position).Size2D() < tower->MaxRadius + MaxRadius)
 			{
-				if (tower->CanGuide && tower->GetIsActive())
+				if (tower->GetIsActive())
 				{
 					IsActive = true;
 					DecalComp->SetHiddenInGame(false);
 					deactivated = false;
+					CanGuide = tower->CanGuide;
+					CanAlert = tower->CanAlert;
+					if (CanGuide)
+					{
+						contactWithGuide = true;
+					}
+						
+					if (CanAlert)
+					{
+						contactWithAlert = true;
+					}	
+
+					if (contactWithAlert && contactWithGuide)
+					{
+						IsActive = false;
+						deactivated = true;
+						break;
+					}
 				}
 			}
 		}
-		if(deactivated)
-			DecalComp->SetHiddenInGame(true);
 	}
+
+	if (GetIsActive() || Dragged)
+		DecalComp->SetHiddenInGame(false);
 	else
-	{
-		if (IsActive)
-			DecalComp->SetHiddenInGame(false);
-		else
-			DecalComp->SetHiddenInGame(true);
-	}
+		DecalComp->SetHiddenInGame(true);
 }
 
 // Called to bind functionality to input
@@ -128,24 +150,23 @@ void ATower::SetupPlayerInputComponent(class UInputComponent* _InputComponent)
 
 void ATower::Grab(APlayerController * ctrl)
 {
-	if (!IsForcedActive)
+	if (PickSound && !Dragged)
+	{
+		AudioComp->SetSound(PickSound);
+		AudioComp->Play();
+	}
+
+	if (CanMove)
 		Dragged = true;
 	else
 	{
 		IsActive = true;
 		Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
 		for (ATower * tower : pc->SpawnedTowers)
-			if (tower != this && tower->IsForcedActive)
+			if (tower != this && !tower->CanMove)
 			{
 				tower->SetActorHiddenInGame(true);
 			}
-				
-	}
-
-	if (PickSound)
-	{
-		AudioComp->SetSound(PickSound);
-		AudioComp->Play();
 	}
 		
 	Ctrl = ctrl;
@@ -161,15 +182,24 @@ void ATower::Drop()
 	Dragged = false;
 }
 
+void ATower::Remove()
+{
+	Ajam2017PlayerController * pc = Cast<Ajam2017PlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
+	pc->SpawnedTowers.Remove(this);
+	pc->Resources += Cost;
+	pc->DestroyedTowers++;
+	this->Destroy();
+}
+
 bool ATower::GetIsActive()
 {
-	return IsActive && !Dragged;
+	return IsActive && !Dragged && (BuildTimeLeft <= 0);
 }
 
 void ATower::OnCursorOver_Implementation(UPrimitiveComponent * Component)
 {
 	DecalComp->SetHiddenInGame(false);
-	if (HoverSound && !PlayedOnce)
+	if (HoverSound && !PlayedOnce && !Dragged)
 	{
 		PlayedOnce = true;
 		AudioComp->SetSound(HoverSound);

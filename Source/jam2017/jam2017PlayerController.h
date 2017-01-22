@@ -23,6 +23,9 @@ public:
 	bool Catastrophy;
 
 	UPROPERTY(BlueprintReadOnly)
+		int DestroyedTowers;
+
+	UPROPERTY(BlueprintReadOnly)
 	int TotalPopulationTrapped;
 
 	UPROPERTY(BlueprintReadOnly)
@@ -61,6 +64,7 @@ protected:
 	void ScrollNorthSouth(float value);
 	void ScrollEastWest(float value);
 	void LeftPress();
+	void RightPress();
 	void LeftRelease();
 
 	bool Started;
