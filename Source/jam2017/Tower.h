@@ -68,13 +68,21 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
 	USoundWave* DropSound;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
+	USoundWave* HoverSound;
+
 	UPROPERTY(EditDefaultsOnly, Category = "Collisions")
 	UBoxComponent * CollisionComp;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Zone")
 	UDecalComponent * DecalComp;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sounds")
+	UAudioComponent * AudioComp;
+
 	static bool CanCan;
+
+	bool PlayedOnce;
 
 private:
 	bool Dragged;

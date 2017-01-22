@@ -33,6 +33,8 @@ ATower::ATower() : Super()
 	DecalComp->SetupAttachment(RootComponent);
 	DecalComp->DecalSize = FVector(1, 1, 1);
 	DecalComp->SetRelativeRotation(FRotator(-90, 0, 0));
+
+	AudioComp = CreateDefaultSubobject<UAudioComponent>("Audio comp");
 }
 
 // Called when the game starts or when spawned
@@ -139,12 +141,23 @@ void ATower::Grab(APlayerController * ctrl)
 			}
 				
 	}
+
+	if (PickSound)
+	{
+		AudioComp->SetSound(PickSound);
+		AudioComp->Play();
+	}
 		
 	Ctrl = ctrl;
 }
 
 void ATower::Drop()
 {
+	if (DropSound)
+	{
+		AudioComp->SetSound(DropSound);
+		AudioComp->Play();
+	}
 	Dragged = false;
 }
 
@@ -156,10 +169,18 @@ bool ATower::GetIsActive()
 void ATower::OnCursorOver_Implementation(UPrimitiveComponent * Component)
 {
 	DecalComp->SetHiddenInGame(false);
+	if (HoverSound && !PlayedOnce)
+	{
+		PlayedOnce = true;
+		AudioComp->SetSound(HoverSound);
+		AudioComp->Play();
+	}
 }
 
 void ATower::EndCursorOver_Implementation(UPrimitiveComponent * Component)
 {
 	if(!GetIsActive())
 	DecalComp->SetHiddenInGame(true);
+
+	PlayedOnce = false;
 }

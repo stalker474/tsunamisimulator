@@ -19,8 +19,9 @@ void ATsunamiPawn::TriggerEnter(UPrimitiveComponent * HitComp, AActor * OtherAct
 		pc->TotalPopulationTrapped -= house->Population;
 		house->Population = 0;
 	}
-	else if (character)
+	else if (character && !character->Killed)
 	{
+		character->Killed = true;
 		pc->TotalPopulationLeft --;
 	}
 		

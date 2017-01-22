@@ -16,7 +16,7 @@ AHawaianCharacter::AHawaianCharacter()
 void AHawaianCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Killed = false;
 }
 
 // Called every frame
